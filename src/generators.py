@@ -1,22 +1,30 @@
+# ai_content_generator/src/generators.py (MODIFIED)
+
 # Use relative import to get helper function from the same package
 from .utils import call_gemini_api
+import re # Import regular expressions for parsing blog ideas
 
-def generate_about_page(website_context, model):
+# MODIFIED: Function signature now accepts optional arguments
+def generate_about_page(website_context, model, brand_story=None, call_to_action=None):
     """
     Generates an 'About Us' page aiming for approx 600 words,
-    using the provided website context and AI model.
+    using the provided website context, model, and optional details.
     """
     if not model or not website_context:
         print("Error: Model or website context is missing for About Page generation.")
         return None
 
+    # Server-side print for debugging, not visible in Streamlit UI easily
     print("\nGenerating 'About Us' page (aiming for ~600 words)...")
-    print("-" * 30)
 
-    # These could also be moved to context.py if always needed,
-    # but keeping here makes them specific to this generator's run.
-    brand_story = input("Any brief brand story/history for the About page? (Optional, leave blank if none)\n> ")
-    call_to_action = input("Specific call to action for the About page? (e.g., explore posts, contact us)\n> ")
+    # --- REMOVED INPUT CALLS ---
+    # brand_story = input(...) # REMOVED - Value now comes from arguments
+    # call_to_action = input(...) # REMOVED - Value now comes from arguments
+    # --- END REMOVED INPUT CALLS ---
+
+    # Use the arguments passed to the function or provide defaults for the prompt
+    story_detail = brand_story if brand_story else 'Not provided.'
+    cta_detail = call_to_action if call_to_action else 'Encourage exploration of the site.'
 
     prompt = f"""
     Act as an expert copywriter creating a compelling 'About Us' page.
@@ -32,19 +40,20 @@ def generate_about_page(website_context, model):
     * General Tone: {website_context.get('tone_of_voice', 'neutral')}
 
     **About Page Specifics:**
-    * Brand Story: {brand_story if brand_story else 'Not provided.'}
-    * Call to Action: {call_to_action if call_to_action else 'Encourage exploration of the site.'}
+    * Brand Story: {story_detail}
+    * Call to Action: {cta_detail}
 
     **Instructions:**
     1. Write a coherent and engaging 'About Us' page clearly reflecting the central theme.
     2. Strictly adhere to the general tone specified in the context.
     3. Target the specified audience.
     4. Naturally integrate the purpose, offerings, and uniqueness.
-    5. Incorporate the brand story concisely if provided.
-    6. Conclude with or integrate the call to action.
+    5. Incorporate the brand story concisely if provided (value is '{story_detail}').
+    6. Conclude with or integrate the call to action (value is '{cta_detail}').
     7. Structure logically. Do not add information not derived from the details provided.
     8. Important: Write the content to be approximately 600 words long.
     """
+    # Ensure the helper function is called correctly
     return call_gemini_api(model, prompt)
 
 
@@ -60,8 +69,8 @@ def generate_blog_post(website_context, model, topic, keywords=None):
         print("Error: Blog post topic is required.")
         return None
 
+    # Server-side print
     print(f"\nGenerating Blog Post about: '{topic}' (aiming for 600-800 words)...")
-    print("-" * 30)
 
     prompt = f"""
     Act as a knowledgeable blog writer creating an engaging post for the website '{website_context.get('website_name', 'this website')}'.
@@ -88,11 +97,6 @@ def generate_blog_post(website_context, model, topic, keywords=None):
     """
     return call_gemini_api(model, prompt)
 
-# Keep existing imports and functions (generate_about_page, generate_blog_post)
-from .utils import call_gemini_api
-import re # Import regular expressions for parsing
-
-# ... (keep generate_about_page and generate_blog_post functions here) ...
 
 def generate_blog_post_ideas(website_context, model):
     """
@@ -103,8 +107,8 @@ def generate_blog_post_ideas(website_context, model):
         print("Error: Model or website context is missing for Idea generation.")
         return None
 
+    # Server-side print
     print("\nGenerating 10 Blog Post Title Ideas...")
-    print("-" * 30)
 
     prompt = f"""
     Act as an expert content strategist and blogger for the website '{website_context.get('website_name', 'this website')}'.
@@ -136,18 +140,14 @@ def generate_blog_post_ideas(website_context, model):
 
     # Attempt to parse the numbered list into a Python list
     ideas = []
-    # Split lines, strip whitespace, remove potential numbering (e.g., "1. ", "1) ", "1 - ")
     for line in raw_ideas_text.strip().split('\n'):
-        # Regex to remove leading numbers, periods, spaces, hyphens etc.
         cleaned_line = re.sub(r"^\s*\d+[\.\)\-]?\s*", "", line.strip())
-        if cleaned_line: # Only add if something remains after cleaning
+        if cleaned_line:
             ideas.append(cleaned_line)
 
-    if len(ideas) == 0:
+    if not ideas:
          print("Could not parse generated ideas into a list. Raw Output:")
          print(raw_ideas_text)
-         return None # Or return raw_ideas_text if you want to handle it differently
+         return None
 
-    # Ensure we have roughly 10, even if parsing wasn't perfect
-    # print(f"Successfully parsed {len(ideas)} ideas.") # Optional debug print
     return ideas[:10] # Return up to 10 parsed ideas
