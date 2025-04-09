@@ -1,5 +1,10 @@
 # ai_content_generator/src/context.py
 
+
+# The function below gathers context via the command line (CLI).
+# It is NOT used directly by the Streamlit app (app.py), which uses
+# st.form and widgets based on the QUESTIONS dictionary above.
+# Kept here for potential CLI usage or testing.
 # Core questions defining the website's context.
 # This dictionary is imported by the Streamlit app (app.py)
 # to dynamically create the context input form.
@@ -11,11 +16,14 @@ QUESTIONS = {
     "key_offerings": "What are the main things the website offers (e.g., information, products, services, community)?",
     "unique_selling_prop": "What makes this website unique or different from others in the same niche?",
     "tone_of_voice": "What is the general tone of voice for the website's content? (e.g., professional, friendly, informative, witty, technical)",
+    # --- ADDED QUESTIONS ---
+    "brand_story": "Brief Brand Story / History (Optional - for About Page):",
+    "call_to_action": "Default Call to Action for content (Optional - e.g., 'Visit our blog', 'Check services'):"
+    # --- END ADDED QUESTIONS ---
 }
 
 # The function below gathers context via the command line (CLI).
-# It is NOT used directly by the Streamlit app (app.py), which uses
-# st.form and widgets based on the QUESTIONS dictionary above.
+# It is NOT used directly by the Streamlit app (app.py).
 # Kept here for potential CLI usage or testing.
 def gather_website_context():
     """
@@ -24,13 +32,11 @@ def gather_website_context():
     """
     print("\nGathering core website information (CLI Mode)...")
     print("-" * 30)
-
     context = {}
-    # Use the QUESTIONS dictionary defined above to ask questions
     for key, question in QUESTIONS.items():
+        # Use input() for CLI interaction
         context[key] = input(f"{question}\n> ")
-        print("-" * 10) # Separator between questions
-
+        print("-" * 10)
     print("\nWebsite context gathered (CLI Mode).")
     return context
 
