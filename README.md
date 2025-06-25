@@ -41,7 +41,7 @@ Follow these steps to get the application running on your local machine.
 
 1.  **Clone the Repository**
     ```sh
-    git clone [https://github.com/your-username/ai-content-generator.git](https://github.com/your-username/ai-content-generator.git)
+    git clone [https://github.com/blankv15/ai-content-generator](https://github.com/blankv15/ai-content-generator)
     cd ai-content-generator
     ```
 
