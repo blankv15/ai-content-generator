@@ -6,7 +6,7 @@
 
 A powerful, user-friendly web application that leverages Google's Gemini API to generate high-quality website content, including "About" pages and engaging blog posts. The intuitive interface is built with Streamlit, making content creation a breeze.
 
-![AI Content Generator Assistant Initial Screen](https://i.imgur.com/5A8Vb7c.png)
+![AI Content Generator Assistant Initial Screen](https://github.com/blankv15/blogwriter/blob/master/assets/preview7.png)
 
 ## 🚀 Overview
 
